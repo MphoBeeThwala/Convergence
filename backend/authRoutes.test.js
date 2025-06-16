@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const { User } = require(path.join(__dirname, 'models', 'User'));
 const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+const FileSync = require('lowdb/lib/FileSync');
 const fs = require('fs');
 const authRoutes = require(path.join(__dirname, 'routes', 'authRoutes'));
 
