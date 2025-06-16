@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 
-const API_URL = 'https://unifiedecommerce.onrender.com/api/shop';
+const API_URL = import.meta.env.VITE_API_URL + '/shop';
 
 export default function ProductListPage() {
   const { user, token } = useAuth();
