@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const validator = require('validator');
 const low = require('lowdb');
-const FileSync = require('lowdb/lib/FileSync');
+const FileSync = require('lowdb/adapters/FileSync');
 
 // Rate limiter for login endpoint
 const loginLimiter = rateLimit({

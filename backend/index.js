@@ -26,7 +26,7 @@ app.use('/api/auth', authRoutes);
 
 // Use a free, file-based database (lowdb)
 const low = require('lowdb');
-const FileSync = require('lowdb/lib/FileSync');
+const FileSync = require('lowdb/adapters/FileSync');
 const { join } = require('path');
 
 // Use lowdb for persistent user storage
