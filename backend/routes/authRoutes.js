@@ -12,7 +12,10 @@ const FileSync = require('lowdb/adapters/FileSync');
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 5, // limit each IP to 5 requests per windowMs
-    message: { message: 'Too many login attempts, please try again later.' }
+    message: { message: 'Too many login attempts, please try again later.' },
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    trustProxy: true // Trust X-Forwarded-For header
 });
 
 // Helper: Password strength validation

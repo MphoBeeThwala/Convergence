@@ -12,6 +12,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+// Trust proxy - required for Render.com deployment
+app.set('trust proxy', 1);
+
 // Body parser middleware
 app.use(express.json());
 app.use(cors());
