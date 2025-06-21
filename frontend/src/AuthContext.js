@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL + '/auth'; // Adjust if backend runs elsewhere
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const AuthContext = createContext();
 
@@ -15,9 +15,14 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const saved = localStorage.getItem('auth');
     if (saved) {
-      const { user, token } = JSON.parse(saved);
-      setUser(user);
-      setToken(token);
+      try {
+        const { user, token } = JSON.parse(saved);
+        setUser(user);
+        setToken(token);
+      } catch (err) {
+        console.error('Error parsing saved auth data:', err);
+        localStorage.removeItem('auth');
+      }
     }
   }, []);
 
@@ -30,14 +35,17 @@ export function AuthProvider({ children }) {
   }, [user, token]);
 
   const register = async (data) => {
-    setLoading(true); setError(null);
+    setLoading(true); 
+    setError(null);
     try {
-      const res = await axios.post(`${API_URL}/register`, data);
+      const res = await axios.post(`${API_URL}/auth/register`, data);
       setUser(res.data.user);
       setToken(res.data.token);
       return true;
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
+      console.error('Registration error:', err);
       return false;
     } finally {
       setLoading(false);
@@ -45,14 +53,17 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (data) => {
-    setLoading(true); setError(null);
+    setLoading(true); 
+    setError(null);
     try {
-      const res = await axios.post(`${API_URL}/login`, data);
+      const res = await axios.post(`${API_URL}/auth/login`, data);
       setUser(res.data.user);
       setToken(res.data.token);
       return true;
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
+      console.error('Login error:', err);
       return false;
     } finally {
       setLoading(false);
@@ -62,18 +73,22 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     setToken(null);
+    setError(null);
   };
 
   const update = async (data) => {
-    setLoading(true); setError(null);
+    setLoading(true); 
+    setError(null);
     try {
-      const res = await axios.put(`${API_URL}/update`, data, {
+      const res = await axios.put(`${API_URL}/auth/update`, data, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data.user);
       return true;
     } catch (err) {
-      setError(err.response?.data?.message || 'Update failed');
+      const errorMessage = err.response?.data?.message || 'Update failed. Please try again.';
+      setError(errorMessage);
+      console.error('Update error:', err);
       return false;
     } finally {
       setLoading(false);
@@ -81,28 +96,50 @@ export function AuthProvider({ children }) {
   };
 
   const remove = async () => {
-    setLoading(true); setError(null);
+    setLoading(true); 
+    setError(null);
     try {
-      await axios.delete(`${API_URL}/delete`, {
+      await axios.delete(`${API_URL}/auth/delete`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       logout();
       return true;
     } catch (err) {
-      setError(err.response?.data?.message || 'Delete failed');
+      const errorMessage = err.response?.data?.message || 'Delete failed. Please try again.';
+      setError(errorMessage);
+      console.error('Delete error:', err);
       return false;
     } finally {
       setLoading(false);
     }
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, error, register, login, logout, update, remove }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      token, 
+      loading, 
+      error, 
+      register, 
+      login, 
+      logout, 
+      update, 
+      remove,
+      clearError 
+    }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
