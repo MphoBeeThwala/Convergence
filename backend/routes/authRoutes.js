@@ -8,6 +8,9 @@ const validator = require('validator');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
+// JWT Secret from environment variable
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+
 // Rate limiter for login endpoint
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -75,7 +78,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         return res.status(401).json({message: 'invalid email or password' });
     }
     // Issue JWT
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
     // Hide password in response
     const { password: pw, ...userWithoutPassword } = user;
     res.json({ message: 'Login successful!', user: userWithoutPassword, token });
@@ -86,7 +89,7 @@ function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'No token provided' });
-    jwt.verify(token, 'your_jwt_secret', (err, user) => {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ message: 'Invalid token' });
         req.user = user;
         next();

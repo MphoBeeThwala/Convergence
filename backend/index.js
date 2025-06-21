@@ -1,12 +1,5 @@
-//Import Express const express = require('express');
-
-//Create an Express app const app =express();
-
-//Define a simple route app.get('/', req, res) => {res.send('Hello, Unified E-Commerce!');});
-
-//Set the port (default to 3000) const PORT = process.env.PORT || 3000;
-
-//Start the server app.listen(PORT , ()=> {console.log('Server is running on });
+// Load environment variables
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
@@ -33,24 +26,38 @@ const FileSync = require('lowdb/adapters/FileSync');
 const { join } = require('path');
 
 // Use lowdb for persistent user storage
-const dbFile = join(__dirname, '../backend/db.json');
+const dbFile = join(__dirname, 'db.json');
 const adapter = new FileSync(dbFile);
 const db = low(adapter);
 
-// Initialize DB with users if not present
-db.defaults({ users: [] }).write();
+// Initialize DB with users and products if not present
+db.defaults({ users: [], products: [] }).write();
 app.locals.db = db;
 
 // Health check route for readiness and integration testing
 app.get('/', (req, res) => {
-  res.json({ status: 'Unified E-Commerce backend is running.' });
+  res.json({ 
+    status: 'Unified E-Commerce backend is running.',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
-// CORS is already enabled for all origins. For production, restrict as needed:
-// app.use(cors({ origin: 'http://localhost:3001' })); // Example for React dev server
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
 
 // Start server only after DB is ready
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Health check: http://localhost:${PORT}/`);
 });
