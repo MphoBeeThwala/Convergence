@@ -4,6 +4,20 @@ import { useAuth } from './AuthContext';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000/api') + '/shop';
 
+// Custom hook for debouncing input
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 export default function ProductListPage() {
   const { user, token } = useAuth();
   const [products, setProducts] = useState([]);
@@ -14,10 +28,14 @@ export default function ProductListPage() {
   const [productsLoading, setProductsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const fetchProducts = async () => {
+  // Debounce search query to avoid excessive API calls
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const fetchProducts = async (query = '') => {
     try {
       setProductsLoading(true);
-      const res = await axios.get(API_URL);
+      // Use the new /search endpoint. If query is empty, it returns all products.
+      const res = await axios.get(`${API_URL}/search?q=${query}`);
       setProducts(res.data);
     } catch (err) {
       setError('Failed to load products');
@@ -28,8 +46,8 @@ export default function ProductListPage() {
   };
 
   useEffect(() => { 
-    fetchProducts(); 
-  }, []);
+    fetchProducts(debouncedSearchQuery); 
+  }, [debouncedSearchQuery]);
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -84,11 +102,6 @@ export default function ProductListPage() {
     setEditing(null);
     setForm({ name: '', description: '', price: '', image: '' });
   };
-
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className="dashboard-container">
@@ -163,7 +176,7 @@ export default function ProductListPage() {
       ) : (
         <div className="products-section">
           <div className="search-and-header">
-            <h3>Available Products ({filteredProducts.length})</h3>
+            <h3>Available Products ({products.length})</h3>
             <div className="search-bar form-group">
               <input
                 type="text"
@@ -173,13 +186,13 @@ export default function ProductListPage() {
               />
             </div>
           </div>
-          {filteredProducts.length === 0 ? (
+          {products.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#666' }}>
               {searchQuery ? 'No products match your search.' : 'No products available yet.'}
             </p>
           ) : (
             <ul className="product-list">
-              {filteredProducts.map(p => (
+              {products.map(p => (
                 <li key={p.id} className="product-item">
                   <div className="product-info">
                     <h4>{p.name}</h4>

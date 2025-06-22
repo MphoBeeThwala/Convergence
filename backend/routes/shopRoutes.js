@@ -18,6 +18,26 @@ router.get('/', (req, res) => {
   res.json(products);
 });
 
+// Search for products
+router.get('/search', (req, res) => {
+  const { q } = req.query;
+  if (!q) {
+    // If no query, return all products instead of an error
+    const products = db.get('products').value();
+    return res.json(products);
+  }
+  try {
+    const products = db.get('products').value();
+    const filteredProducts = products.filter(p => 
+      p.name.toLowerCase().includes(q.toLowerCase()) ||
+      p.description.toLowerCase().includes(q.toLowerCase())
+    );
+    res.json(filteredProducts);
+  } catch(e) {
+    res.status(500).json({ message: "Error searching for products."})
+  }
+});
+
 // Get product by id
 router.get('/:id', (req, res) => {
   const product = db.get('products').find({ id: req.params.id }).value();
