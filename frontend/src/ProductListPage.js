@@ -12,6 +12,7 @@ export default function ProductListPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [productsLoading, setProductsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchProducts = async () => {
     try {
@@ -83,6 +84,11 @@ export default function ProductListPage() {
     setEditing(null);
     setForm({ name: '', description: '', price: '', image: '' });
   };
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="dashboard-container">
@@ -156,12 +162,24 @@ export default function ProductListPage() {
         <div style={{ textAlign: 'center', padding: '2rem' }}>Loading products...</div>
       ) : (
         <div className="products-section">
-          <h3>Available Products ({products.length})</h3>
-          {products.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#666' }}>No products available yet.</p>
+          <div className="search-and-header">
+            <h3>Available Products ({filteredProducts.length})</h3>
+            <div className="search-bar form-group">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+          {filteredProducts.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#666' }}>
+              {searchQuery ? 'No products match your search.' : 'No products available yet.'}
+            </p>
           ) : (
             <ul className="product-list">
-              {products.map(p => (
+              {filteredProducts.map(p => (
                 <li key={p.id} className="product-item">
                   <div className="product-info">
                     <h4>{p.name}</h4>
