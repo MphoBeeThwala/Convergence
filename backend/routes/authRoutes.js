@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const validator = require('validator');
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const { authenticateJWT } = require('../middleware/authMiddleware');
 
 // JWT Secret from environment variable
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -84,20 +85,8 @@ router.post('/login', loginLimiter, async (req, res) => {
     res.json({ message: 'Login successful!', user: userWithoutPassword, token });
 });
 
-// Middleware: Authenticate JWT
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'No token provided' });
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ message: 'Invalid token' });
-        req.user = user;
-        next();
-    });
-}
-
 // Update account endpoint (protected)
-router.put('/update', authenticateToken, async (req, res) => {
+router.put('/update', authenticateJWT, async (req, res) => {
     const db = getDb(req);
     const users = db.get('users').value();
     const { name, phone, password } = req.body;
@@ -117,7 +106,7 @@ router.put('/update', authenticateToken, async (req, res) => {
 });
 
 // Delete account endpoint (protected)
-router.delete('/delete', authenticateToken, async (req, res) => {
+router.delete('/delete', authenticateJWT, async (req, res) => {
     const db = getDb(req);
     let users = db.get('users').value();
     const userIndex = users.findIndex(u => u.id === req.user.id);

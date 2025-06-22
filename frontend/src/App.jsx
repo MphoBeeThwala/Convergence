@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './AuthContext';
-import LoginPage from './LoginPage';
-import RegisterPage from './RegisterPage';
-import DashboardPage from './DashboardPage';
-import ProductListPage from './ProductListPage';
-import ProtectedRoute from './ProtectedRoute';
+import { AuthProvider, useAuth } from './AuthContext.jsx';
+import LoginPage from './LoginPage.jsx';
+import RegisterPage from './RegisterPage.jsx';
+import DashboardPage from './DashboardPage.jsx';
+import ProductListPage from './ProductListPage.jsx';
+import ProtectedRoute from './ProtectedRoute.jsx';
 import './App.css';
 
 function Nav() {
