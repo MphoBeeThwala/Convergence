@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-console.log('🚀 Starting UnifiedECommerce Development Environment...\n');
+console.log('🚀 Starting Convergence Development Environment...\n');
 
 // Start backend
 const backend = spawn('npm', ['run', 'dev'], {

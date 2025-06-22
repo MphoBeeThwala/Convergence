@@ -37,7 +37,7 @@ app.locals.db = db;
 // Health check route for readiness and integration testing
 app.get('/', (req, res) => {
   res.json({ 
-    status: 'Unified E-Commerce backend is running.',
+    status: 'Convergence backend is running.',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });

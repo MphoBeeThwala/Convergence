@@ -1,4 +1,4 @@
-# UnifiedECommerce
+# Convergence
 
 A modern, full-stack e-commerce platform built with React and Node.js, featuring user authentication, product management, and a responsive design.
 
@@ -32,7 +32,7 @@ A modern, full-stack e-commerce platform built with React and Node.js, featuring
 ## 📁 Project Structure
 
 ```
-UnifiedECommerce/
+Convergence/
 ├── frontend/                 # React frontend application
 │   ├── src/
 │   │   ├── App.jsx          # Main app component with routing
@@ -72,7 +72,7 @@ UnifiedECommerce/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd UnifiedECommerce
+   cd Convergence
    ```
 
 2. **Set up environment variables**
@@ -146,6 +146,10 @@ npm run build
 cd backend
 npm start
 ```
+
+## 🚀 Deployment
+
+For deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## 🔒 Security Features
 
