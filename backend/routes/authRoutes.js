@@ -60,9 +60,13 @@ router.post('/register', async (req, res) => {
     const userRole = role && ['admin', 'user'].includes(role) ? role : 'user';
     const newUser = new User(users.length + 1, name, email, phone, nationalID, hashedPassword, userRole);
     db.get('users').push(newUser).write();
+
+    // Issue JWT for the new user to log them in automatically
+    const token = jwt.sign({ id: newUser.id, email: newUser.email, role: newUser.role }, JWT_SECRET, { expiresIn: '1h' });
+
     // Hide password in response
     const { password: pw, ...userWithoutPassword } = newUser;
-    res.status(201).json({message: 'User registered succesfully!', user: userWithoutPassword});
+    res.status(201).json({message: 'User registered succesfully!', user: userWithoutPassword, token: token});
 });
 
 //User login route
