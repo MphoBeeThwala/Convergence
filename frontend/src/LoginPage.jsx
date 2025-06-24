@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 export default function LoginPage() {
   const { login, error, loading, clearError } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  // Clear error when component mounts or form changes
+  // Clear error when component mounts
   useEffect(() => {
     clearError();
   }, [clearError]);
@@ -19,9 +20,10 @@ export default function LoginPage() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setSuccess(false);
     const ok = await login(form);
-    setSuccess(ok);
+    if (ok) {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -57,7 +59,6 @@ export default function LoginPage() {
         </button>
       </form>
       {error && <div className="error">{error}</div>}
-      {success && <div className="success">Login successful! Redirecting...</div>}
     </div>
   );
 }

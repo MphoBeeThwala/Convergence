@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 export default function RegisterPage() {
@@ -6,9 +7,9 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     name: '', email: '', phone: '', nationalID: '', password: ''
   });
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  // Clear error when component mounts or form changes
+  // Clear error when component mounts
   useEffect(() => {
     clearError();
   }, [clearError]);
@@ -21,9 +22,10 @@ export default function RegisterPage() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setSuccess(false);
     const ok = await register(form);
-    setSuccess(ok);
+    if (ok) {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -93,7 +95,6 @@ export default function RegisterPage() {
         </button>
       </form>
       {error && <div className="error">{error}</div>}
-      {success && <div className="success">Registration successful! You can now login.</div>}
     </div>
   );
 }

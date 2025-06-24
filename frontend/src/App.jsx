@@ -29,7 +29,7 @@ function Nav() {
 }
 
 function Home() {
-  return <div className="home-container"><h2>Unified E-Commerce Demo</h2><p>Welcome! Please register or login to continue.</p></div>;
+  return <div className="home-container"><h2>Convergence Demo</h2><p>Welcome! Please register or login to continue.</p></div>;
 }
 
 function App() {
