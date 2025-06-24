@@ -10,7 +10,7 @@ const FileSync = require('lowdb/adapters/FileSync');
 const { authenticateJWT } = require('../middleware/authMiddleware');
 
 // JWT Secret from environment variable
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key_for_jwt_2024';
 
 // Rate limiter for login endpoint
 const loginLimiter = rateLimit({
