@@ -1,3 +1,8 @@
 JWT_SECRET=your_super_secure_jwt_secret_key_2024
 PORT=3000
-NODE_ENV=development 
+NODE_ENV=development
+DB_USERNAME=MswatiI
+DB_PASSWORD=password123
+DB_DATABASE=convergence_db
+DB_HOST=localhost
+DB_PORT=5432

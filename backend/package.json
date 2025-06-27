@@ -1,30 +1,39 @@
 {
   "name": "convergence-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "test": "jest"
   },
-  "keywords": ["api", "express", "jwt", "ecommerce"],
-  "author": "Your Name",
+  "keywords": [
+    "api",
+    "express",
+    "jwt",
+    "ecommerce",
+    "aggregator"
+  ],
+  "author": "TheMol (Pty) Ltd",
   "license": "ISC",
-  "description": "Backend API for my e-commerce project. Still learning Express, but it works!",
+  "description": "Backend API for the Convergence smart shopping aggregator.",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "lowdb": "1.0.0",
-    "express-rate-limit": "^6.7.0",
-    "validator": "^13.9.0",
-    "dotenv": "^16.3.1"
+    "pg": "^8.16.2",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "sequelize-cli": "^6.6.3",
+    "supertest": "^6.3.3"
   }
 }
